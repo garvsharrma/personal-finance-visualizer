@@ -2,15 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Transaction } from '@/models/transaction';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
+// Remove the Props type and directly use the context parameter
 export async function DELETE(
   request: NextRequest,
-  { params }: Props
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
