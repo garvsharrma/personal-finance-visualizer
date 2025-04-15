@@ -1,24 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Transaction } from '@/models/transaction';
+import mongoose from 'mongoose';
 
-// Remove the Props type and directly use the context parameter
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    await connectDB();
+    // Await the params to satisfy Next.js 14 requirements
+    const { id } = await context.params;
 
-    const deletedTransaction = await Transaction.findByIdAndDelete(params.id);
-
-    if (!deletedTransaction) {
-      return NextResponse.json({ message: 'Transaction not found' }, { status: 404 });
+    if (!mongoose.isValidObjectId(id)) {
+      return NextResponse.json(
+        { message: 'Invalid transaction ID' },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json({ message: 'Transaction deleted successfully' });
+    await connectDB();
+
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+
+    if (!deletedTransaction) {
+      return NextResponse.json(
+        { message: 'Transaction not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Transaction deleted successfully',
+      data: deletedTransaction
+    });
   } catch (error) {
     console.error('DELETE error:', error);
-    return NextResponse.json({ message: 'Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Server Error', error: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }
