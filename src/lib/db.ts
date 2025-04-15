@@ -1,29 +1,24 @@
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) throw new Error('MONGODB_URI not set');
 
-// Use 'any' to allow access to globalThis.mongoose
-const globalAny = globalThis as any;
+// Safely cast globalThis to the correct type
+const globalAny = globalThis as unknown as { mongoose: { conn: Connection | null; promise: Promise<Connection> | null } };
 
-let cached = globalAny.mongoose || { conn: null, promise: null };
+const cached = globalAny.mongoose || { conn: null, promise: null };
 
-// Type the cached object and its properties
-interface Cached {
-  conn: mongoose.Connection | null;
-  promise: Promise<mongoose.Connection> | null;
-}
-
+// Update the `connectDB` function
 export async function connectDB() {
   if (cached.conn) return cached.conn;
-  
+
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    }).then((m) => m.connection);  // Explicitly using `.connection` to get a `mongoose.Connection`
+    }).then((m) => m.connection); // Ensure we use `.connection` for the `Connection` type
   }
-  
+
   cached.conn = await cached.promise;
   return cached.conn;
 }
