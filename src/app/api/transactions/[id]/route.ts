@@ -2,14 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Transaction } from '@/models/transaction';
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: Props
 ) {
   try {
     await connectDB();
 
-    const deletedTransaction = await Transaction.findByIdAndDelete(context.params.id);
+    const deletedTransaction = await Transaction.findByIdAndDelete(params.id);
 
     if (!deletedTransaction) {
       return NextResponse.json({ message: 'Transaction not found' }, { status: 404 });
