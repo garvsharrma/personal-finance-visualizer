@@ -36,6 +36,13 @@ npm install
 ```bash
 npm run dev
 ```
+4. Make sure to add your own .env.local file with the MongoDB URI:
+```bash
+
+MONGODB_URI=your_mongodb_connection_string
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -48,6 +55,7 @@ personal-finance-visualizer/
 │   ├── app/           # Next.js app router
 │   └── lib/           # Utility functions
 ├── public/            # Static assets
+├── .env.local         # Environment variables
 └── package.json       # Project dependencies
 ```
 

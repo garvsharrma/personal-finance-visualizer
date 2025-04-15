@@ -4,9 +4,24 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#845EC2', '#FF6F91'];
 
-export default function CategoryPieChart({ data }: { data: any[] }) {
+// Define the types for data and transaction
+interface Transaction {
+  category: string;
+  amount: number;
+}
+
+interface CategoryData {
+  name: string;
+  value: number;
+}
+
+interface CategoryPieChartProps {
+  data: Transaction[];
+}
+
+export default function CategoryPieChart({ data }: CategoryPieChartProps) {
   // Group by category
-  const categoryData = data.reduce((acc: any, txn: any) => {
+  const categoryData = data.reduce((acc: Record<string, number>, txn: Transaction) => {
     const category = txn.category || 'Others';
     if (!acc[category]) acc[category] = 0;
     acc[category] += txn.amount;
@@ -14,7 +29,7 @@ export default function CategoryPieChart({ data }: { data: any[] }) {
   }, {});
 
   // Convert to chart format
-  const pieData = Object.keys(categoryData).map((cat) => ({
+  const pieData: CategoryData[] = Object.keys(categoryData).map((cat) => ({
     name: cat,
     value: categoryData[cat],
   }));
