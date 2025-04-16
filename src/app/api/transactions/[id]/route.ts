@@ -5,10 +5,11 @@ import mongoose from 'mongoose';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id : string}> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    // Await the params to get the id
+    const { id } = await params;
 
     if (!mongoose.isValidObjectId(id)) {
       return NextResponse.json(
