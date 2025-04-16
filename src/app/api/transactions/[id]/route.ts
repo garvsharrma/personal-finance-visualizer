@@ -3,13 +3,15 @@ import { connectDB } from '@/lib/db';
 import { Transaction } from '@/models/transaction';
 import mongoose from 'mongoose';
 
-// Use the specific pattern for dynamic route handlers in Next.js 15
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+interface RouteContext {
+  params: {
+    id: string;
+  };
+}
+
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
-    const id = params.id;
+    const { id } = context.params;
 
     if (!mongoose.isValidObjectId(id)) {
       return NextResponse.json(
