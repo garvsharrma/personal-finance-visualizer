@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: Promise<{ id : string}> }
 ) {
   try {
     const id = params.id;
