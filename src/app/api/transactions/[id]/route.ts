@@ -3,15 +3,12 @@ import { connectDB } from '@/lib/db';
 import { Transaction } from '@/models/transaction';
 import mongoose from 'mongoose';
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
-
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
   try {
-    const { id } = context.params;
+    const id = params.id;
 
     if (!mongoose.isValidObjectId(id)) {
       return NextResponse.json(
